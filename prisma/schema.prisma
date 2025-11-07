@@ -63,6 +63,7 @@ model rereview {
   content String? @db.Text
   origin  BigInt
   writer  BigInt
+  created_at DateTime @db.DateTime(6)
 }
 
 model review {
@@ -71,6 +72,7 @@ model review {
   reviewer BigInt
   score    Decimal? @db.Decimal(2, 1)
   content  String?  @db.Text
+  created_at DateTime @db.DateTime(6)
 }
 
 model reviewpicture {
