@@ -2,7 +2,7 @@ import { prisma } from "../db.config.js";
 
 export const getReviewAnswer = async (reviews) => {
     for(const review of reviews.reviews) {
-        const rereview = await prisma.rereview.findMany({
+        const rereview = await prisma.rereview.findFirst({
             select: {
                 content: true,
                 created_at: true
@@ -12,13 +12,13 @@ export const getReviewAnswer = async (reviews) => {
             }
         })
 
-        if(rereview.length == 0) {
-            review["is_answer"] = false;
-            review["answer"] = null;
+        if(rereview == null) {
+            review.is_answer = false;
+            review.answer = null;
         }
         else {
-            review["is_answer"] = true;
-            review["answer"] = {
+            review.is_answer = true;
+            review.answer = {
                 content: rereview.content,
                 created_at: rereview.created_at
             }

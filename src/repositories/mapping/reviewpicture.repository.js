@@ -10,7 +10,8 @@ export const getReviewImages = async (reviews) => {
                 review: review.id
             }
         })
-        review.images = images;
+        review.images = [];
+        for(const imageId of images) review.images.push(imageId.picture);
     }
     return reviews;
 }

@@ -46,5 +46,6 @@ export const userSignUp = async (data) => {
 
 export const listUserReviews = async (user, cursor) => {
     const reviews = await getReviewAnswer(await getImageUrl(await getReviewImages(await getUserReviews(user, cursor))));
+
     return responseFromUserReviews(reviews);
 }

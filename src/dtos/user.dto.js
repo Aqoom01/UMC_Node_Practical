@@ -19,6 +19,6 @@ export const responseFromUser = ({ user }) => {
     };
 };
 
-export const responseFromUserReviews = ({ reviews }) => {
+export const responseFromUserReviews = (reviews) => {
     return reviews;
 }
