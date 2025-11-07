@@ -10,8 +10,9 @@ export const getUserReviews = async (user, cursor) => {
             created_at: true
         },
         where: {
-            reviewer: user.id, id: { gt: cursor }
+            reviewer: user.id
         },
+        cursor: cursor ? {id: cursor} : undefined,
         orderBy: {
             created_at: "desc"
         },
