@@ -15,6 +15,9 @@ import {
 import {
     getReviewAnswer
 } from "../repositories/rereview.repository.js";
+import {
+    getImageUrl
+} from "../repositories/picture.repository.js";
 
 
 export const getUserByAccessToken = async (s) => {
@@ -42,7 +45,6 @@ export const userSignUp = async (data) => {
 };
 
 export const listUserReviews = async (user, cursor) => {
-    const reviews = await getReviewAnswer(await getReviewImages(await getUserReviews(user, cursor)));
-
-    return responseFromUserReviews(plusAnswer);
+    const reviews = await getReviewAnswer(await getImageUrl(await getReviewImages(await getUserReviews(user, cursor))));
+    return responseFromUserReviews(reviews);
 }

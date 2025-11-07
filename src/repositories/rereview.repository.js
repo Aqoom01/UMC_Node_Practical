@@ -12,7 +12,7 @@ export const getReviewAnswer = async (reviews) => {
             }
         })
 
-        if(rereview == null) {
+        if(rereview.length == 0) {
             review["is_answer"] = false;
             review["answer"] = null;
         }

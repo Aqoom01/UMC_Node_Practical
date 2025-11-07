@@ -2,15 +2,15 @@ import { prisma } from "../../db.config.js";
 
 export const getReviewImages = async (reviews) => {
     for(const review of reviews.reviews) {
-        const images = prisma.picture.findMany({
+        const images = await prisma.reviewpicture.findMany({
             select: {
-                url: true
+                picture: true
             },
             where: {
                 review: review.id
             }
         })
-        review["images"] = images;
+        review.images = images;
     }
     return reviews;
 }

@@ -24,7 +24,7 @@ export const handleUserSignup = async (req, res, next) => {
 export const handleUserReviews = async (req, res, next) => {
     console.log("작성한 리뷰 목록 조회를 요청했습니다!");
 
-    const user = await getUserByAccessToken(req.headers.authrization);
+    const user = await getUserByAccessToken(req.get("Authorization"));
     if(user == null) throw new Error("사용자가 불분명합니다.");
     
     const cursor = (typeof req.query.cursor === "string") ? parseInt(req.query.cursor) : 0
