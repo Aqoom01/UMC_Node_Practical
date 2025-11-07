@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from "dotenv";
+import cors from "cors";
 
 // 엔드포인트 import
 import { handleUserSignup } from './controllers/user.controller.js';
+import { handleListStoreReviews } from './services/store.service.js';
 
 dotenv.config();
 
