@@ -1,8 +1,26 @@
-import { responseFromUser } from "../dtos/user.dto.js";
+import {
+    responseFromUser,
+    responseFromUserReviews
+} from "../dtos/user.dto.js";
 import {
     addUser,
     getUser
 } from "../repositories/user.repository.js";
+import {
+    getUserReviews
+} from "../repositories/review.repository.js"
+import {
+    getReviewImages
+} from "../repositories/mapping/reviewpicture.repository.js";
+import {
+    getReviewAnswer
+} from "../repositories/rereview.repository.js";
+
+
+export const getUserByAccessToken = async (s) => {
+    const user = await getUser(s.split("-")[4]);
+    return user;
+}
 
 export const userSignUp = async (data) => {
     const joinUserId = await addUser({
@@ -22,3 +40,9 @@ export const userSignUp = async (data) => {
     const user = await getUser(joinUserId);
     return responseFromUser({ user });
 };
+
+export const listUserReviews = async (user, cursor) => {
+    const reviews = await getReviewAnswer(await getReviewImages(await getUserReviews(user, cursor)));
+
+    return responseFromUserReviews(plusAnswer);
+}

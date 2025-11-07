@@ -18,3 +18,7 @@ export const responseFromUser = ({ user }) => {
         refresh_token: `refresh-token-for-user-${user.id}`
     };
 };
+
+export const responseFromUserReviews = ({ reviews }) => {
+    return reviews;
+}

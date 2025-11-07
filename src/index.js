@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 // 엔드포인트 import
-import { handleUserSignup } from './controllers/user.controller.js';
+import { 
+  handleUserSignup,
+  handleUserReviews
+} from './controllers/user.controller.js';
 import { handleListStoreReviews } from './services/store.service.js';
 
 dotenv.config();
@@ -26,6 +29,9 @@ app.post("/users/signup", handleUserSignup);
 
 // 6주차 실습 - 페이지네이션
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+
+// 6주차 미션(1)
+app.get("/mypage/reviews", handleUserReviews);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
