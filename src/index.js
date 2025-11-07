@@ -19,8 +19,11 @@ app.get('/', (req, res) => {
 })
 
 
+// 5주차 실습
 app.post("/users/signup", handleUserSignup);
 
+// 6주차 실습 - 페이지네이션
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
