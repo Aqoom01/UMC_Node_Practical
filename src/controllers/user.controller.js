@@ -11,16 +11,6 @@ export const handleUserSignup = async (req, res, next) => {
     
     const user = await userSignUp(bodyToUser(req.body));
     res.status(StatusCodes.OK).success(user);
-
-    // res.status(StatusCodes.OK).json({
-    //     success: true,
-    //     code: StatusCodes.OK,
-    //     message: "회원가입 요청이 완료되었습니다.",
-    //     data: {
-    //         access_token: "Bearer " + user.access_token,
-    //         refresh_token: "Bearer " + user.refresh_token
-    //     }
-    // });
 };
 
 export const handleUserReviews = async (req, res, next) => {
@@ -32,10 +22,5 @@ export const handleUserReviews = async (req, res, next) => {
     const cursor = (typeof req.query.cursor === "string") ? parseInt(req.query.cursor) : 0
 
     const reviews = await listUserReviews(user, cursor);
-    res.status(StatusCodes.OK).json({
-        success: true,
-        code: StatusCodes.OK,
-        message: "리뷰 목록 조회 요청이 완료되었습니다.",
-        data: reviews
-    });
+    res.status(StatusCodes.OK).success(reviews);
 }

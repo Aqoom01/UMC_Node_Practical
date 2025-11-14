@@ -8,6 +8,7 @@ import {
   handleUserReviews
 } from './controllers/user.controller.js';
 import { handleListStoreReviews } from './services/store.service.js';
+import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
 
@@ -21,20 +22,32 @@ app.use(express.urlencoded({ extended: false }));
 app.set('json replacer', (key, value) =>
   typeof value === 'bigint' ? parseInt(value) : value
 );
+
 app.use((req, res, next) => {
-  res.success = (success) => {
-    return res.json({ resultType: "SUCCESS", error: null, success });
+  res.success = (data, statusCode = StatusCodes.OK) => {
+    return res.status(statusCode).json({
+      success: true,
+      code: statusCode,
+      data,
+    });
   };
 
-  res.error = ({ errorCode: "unknown", reason: null, data: null });
-  return res.json({
-    resultType: "FAIL",
-    error: { errorCode, reason, data },
-    success: null
-  });
+  res.error = ({
+    statusCode = 500,
+    errorCode = "unknown",
+    reason = null,
+    data = null,
+  } = {}) => {
+    return res.status(statusCode).json({
+      success: false,
+      code: errorCode,
+      reason,
+      data,
+    });
+  };
 
   next();
-})
+});
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

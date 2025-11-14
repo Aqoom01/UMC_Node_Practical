@@ -6,5 +6,5 @@ export const handleListStoreReviews = async (req, res, next) => {
         parseInt(req.params.storeId),
         typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
     );
-    res.status(StatusCodes.OK).json(reviews);
+    res.status(StatusCodes.OK).success(reviews);
 }
