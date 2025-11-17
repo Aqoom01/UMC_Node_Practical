@@ -18,6 +18,10 @@ import {
 import {
     getImageUrl
 } from "../repositories/picture.repository.js";
+import {
+    DuplicateUserEmailError,
+    UnValidatedAccessTokenError
+} from "../errors.js";
 
 
 export const getUserByAccessToken = async (s) => {
