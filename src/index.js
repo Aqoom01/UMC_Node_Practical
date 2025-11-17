@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
+import swaggerAutogen from 'swagger-autogen';
+import swaggerUiExpress from "swagger-ui-express";
 
 // 엔드포인트 import
 import { 
@@ -57,12 +59,47 @@ app.get('/', (req, res) => {
 // 5주차 실습
 app.post("/users/signup", handleUserSignup);
 
+
+
 // 6주차 실습 - 페이지네이션
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 // 6주차 미션(1)
 app.get("/mypage/reviews", handleUserReviews);
 
+
+
+// 8주차 실습
+app.use(
+  "/docs",
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup({}, {
+    swaggerOptions: {
+      url: "/openapi.json"
+    }
+  })
+)
+
+app.get("/openapi.json", async (req, res, next) => {
+  // #swagger.ignore = true
+  const options = {
+    openapi: "3.0.0",
+    disableLogs: true,
+    writeOutputFile: false,
+  };
+  const outputFile = "/dev/null";
+  const routes = ["./src/index.js"];
+  const doc = {
+    info: {
+      title: "UMC 9th",
+      description: "UMC 9th Node.js 테스트 프로젝트입니다."
+    },
+    host: "localhost:3000"
+  };
+
+  const result = await swaggerAutogen(options)(outputFile, routes, doc);
+  res.json(result ? result.data : null);
+})
 
 app.use((err, req, res, next) => {
   if (res.headersSent) {
