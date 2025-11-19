@@ -10,7 +10,7 @@ export const getAllStoreReviews = async (storeId, cursor) => {
             score: true
         },
         where: {
-            storeId: storeId,
+            store: storeId,
             id: { gt: cursor }
         },
         orderBy: {

@@ -1,6 +1,6 @@
 export const responseFromReviews = async (reviews) => {
     return {
-        data: reviews,
+        reviews: reviews,
         pagination: {
             cursor: reviews.length ? reviews[reviews.length - 1].id : null
         }

@@ -53,24 +53,24 @@ export const handleUserSignup = async (req, res, next) => {
       }
     };
     #swagger.responses[400] = {
-      description: "회원 가입 실패 응답",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              resultType: { type: "string", example: "FAIL" },
-              error: {
-                type: "object",
-                properties: {
-                  errorCode: { type: "string", example: "U001" },
-                  reason: { type: "string" },
-                  data: { type: "object" }
+        description: "회원 가입 실패 응답",
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        resultType: { type: "string", example: "FAIL" },
+                        error: {
+                            type: "object",
+                            properties: {
+                            errorCode: { type: "string", example: "U001" },
+                            reason: { type: "string" },
+                            data: { type: "object" }
+                        },
+                        success: { type: "object", nullable: true, example: null }
+                    }
                 }
-              },
-              success: { type: "object", nullable: true, example: null }
             }
-          }
         }
       }
     };
@@ -82,12 +82,72 @@ export const handleUserSignup = async (req, res, next) => {
 
 export const handleUserReviews = async (req, res, next) => {
     console.log("작성한 리뷰 목록 조회를 요청했습니다!");
+    /*
+    #swagger.summary = "작성한 리뷰 목록 조회 API";
+    #swagger.responses[500] = {
+        description: "Access_Token 오류",
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        success: { type: "boolean" },
+                        code: { type: "string", example: "U002" },
+                        reason: { type: "string" },
+                        data: { type: "object" }
+                    }
+                }
+            }
+        }
+    };
+    #swagger.responses[200] = {
+        description: "작성한 리뷰 목록 조회 API 성공 응답",
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        success: { type: "boolean" },
+                        code: { type: "string", example: "200" },
+                        data: {
+                            type: "object",
+                            properties: {
+                                reviews: {
+                                    type: "array",
+                                    items: {
+                                        type: "object",
+                                        properties: {
+                                            id: { type: "number" },
+                                            store: { type: "number" },
+                                            score: { type: "number", format: "double", example: "2.1" },
+                                            content: { type: "string" },
+                                            created_at: { type: "string", format: "date" },
+                                            images: { type: "array", items: { type: "string" } },
+                                            is_answer: { type: "boolean" },
+                                            answer: {
+                                                type: "object",
+                                                properties: {
+                                                    content: { type: "string" },
+                                                    created_at: { type: "string", format: "date" }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                cursor: { type: "integer" },
+                                totalReviews: { type: "integer" }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    */
 
     const user = await getUserByAccessToken(req.get("Authorization"));
-    if(user == null) throw new Error("사용자가 불분명합니다.");
     
     const cursor = (typeof req.query.cursor === "string") ? parseInt(req.query.cursor) : 0
-
     const reviews = await listUserReviews(user, cursor);
     res.status(StatusCodes.OK).success(reviews);
 }

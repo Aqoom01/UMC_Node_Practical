@@ -26,9 +26,9 @@ import {
 
 export const getUserByAccessToken = async (s) => {
     const id = s.split("-")[4];
-    if(id != typeof(Int32Array)) throw new UnValidatedAccessTokenError();
-
     const user = await getUser(id);
+    if(user == null) throw new UnValidatedAccessTokenError();
+
     return user;
 }
 

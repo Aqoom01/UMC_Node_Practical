@@ -9,7 +9,7 @@ import {
   handleUserSignup,
   handleUserReviews
 } from './controllers/user.controller.js';
-import { handleListStoreReviews } from './services/store.service.js';
+import { handleListStoreReviews } from './controllers/store.controller.js';
 import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
