@@ -11,68 +11,69 @@ export const handleUserSignup = async (req, res, next) => {
     /* Swagger 설정
     #swagger.summary = '회원 가입 API';
     #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              email: { type: "string" },
-              name: { type: "string" },
-              gender: { type: "string" },
-              birth: { type: "string", format: "date" },
-              address: { type: "string" },
-              detailAddress: { type: "string" },
-              phoneNumber: { type: "string" },
-              preferences: { type: "array", items: { type: "number" } }
+        required: true,
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    required: [
+                        "email",
+                        "password",
+                        "name",
+                        "gender",
+                        "birth",
+                        "address1",
+                        "address2"
+                    ],
+                    properties: {
+                        email: { type: "string", format: "email" },
+                        password: { type: "string", minLength: 8 },
+                        name: { type: "string" },
+                        gender: { type: "string", enum: ["M", "F"] },
+                        birth: { type: "string", format: "date" },
+                        address1: { type: "string", description: "기본 주소" },
+                        address2: { type: "string", description: "상세 주소" }
+                    }
+                }
             }
-          }
         }
-      }
     };
     #swagger.responses[200] = {
-      description: "회원 가입 성공 응답",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              resultType: { type: "string", example: "SUCCESS" },
-              error: { type: "object", nullable: true, example: null },
-              success: {
-                type: "object",
-                properties: {
-                  email: { type: "string" },
-                  name: { type: "string" },
-                  preferCategory: { type: "array", items: { type: "string" } }
-                }
-              }
-            }
-          }
-        }
-      }
-    };
-    #swagger.responses[400] = {
-        description: "회원 가입 실패 응답",
+        description: "회원 가입 성공 응답",
         content: {
             "application/json": {
                 schema: {
                     type: "object",
                     properties: {
-                        resultType: { type: "string", example: "FAIL" },
-                        error: {
+                        success: { type: "boolean" },
+                        code: { type: "string", example: "200" },
+                        data: {
                             type: "object",
                             properties: {
-                            errorCode: { type: "string", example: "U001" },
-                            reason: { type: "string" },
-                            data: { type: "object" }
-                        },
-                        success: { type: "object", nullable: true, example: null }
+                                access_token: { type: "string" },
+                                refresh_token: { type: "string" }
+                            }
+                        }
                     }
                 }
             }
         }
-      }
+    };
+    #swagger.responses[400] = {
+        description: "중복 이메일 등 유효하지 않은 요청",
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        success: { type: "boolean", example: false },
+                        code: { type: "string", example: "U001" },
+                        reason: { type: "string", example: "이미 존재하는 이메일입니다." },
+                        data: { type: "object", nullable: true }
+                    }
+                }
+            }
+        }
     };
     */
     
@@ -84,17 +85,29 @@ export const handleUserReviews = async (req, res, next) => {
     console.log("작성한 리뷰 목록 조회를 요청했습니다!");
     /*
     #swagger.summary = "작성한 리뷰 목록 조회 API";
-    #swagger.responses[500] = {
-        description: "Access_Token 오류",
+    #swagger.parameters['Authorization'] = {
+        in: "header",
+        required: true,
+        description: "access-token-for-user-{userId} 형태의 토큰",
+        schema: { type: "string", example: "Bearer access-token-for-user-1" }
+    };
+    #swagger.parameters['cursor'] = {
+        in: "query",
+        required: false,
+        description: "이전 응답의 cursor 값",
+        schema: { type: "integer", minimum: 0 }
+    };
+    #swagger.responses[401] = {
+        description: "액세스 토큰 검증 실패",
         content: {
             "application/json": {
                 schema: {
                     type: "object",
                     properties: {
-                        success: { type: "boolean" },
+                        success: { type: "boolean", example: false },
                         code: { type: "string", example: "U002" },
-                        reason: { type: "string" },
-                        data: { type: "object" }
+                        reason: { type: "string", example: "Access token is invalid." },
+                        data: { type: "object", nullable: true }
                     }
                 }
             }
