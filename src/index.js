@@ -4,6 +4,13 @@ import cors from "cors";
 import swaggerAutogen from 'swagger-autogen';
 import swaggerUiExpress from "swagger-ui-express";
 
+import passport from "passport";
+import { 
+  googleStrategy,
+  jwtStrategy
+} from "./auth.config.js";
+import { prisma } from "./db.config.js";
+
 // 엔드포인트 import
 import { 
   handleUserSignup,
@@ -14,6 +21,9 @@ import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
 
+passport.use(googleStrategy);
+passport.use(jwtStrategy);
+
 const app = express()
 const port = process.env.PORT;
 
@@ -21,6 +31,8 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(passport.initialize());
+
 app.set('json replacer', (key, value) =>
   typeof value === 'bigint' ? parseInt(value) : value
 );
@@ -30,6 +42,7 @@ app.use((req, res, next) => {
     return res.status(statusCode).json({
       success: true,
       code: statusCode,
+      message: "요청이 성공적입니다.",
       data,
     });
   };
@@ -43,13 +56,15 @@ app.use((req, res, next) => {
     return res.status(statusCode).json({
       success: false,
       code: errorCode,
-      reason,
+      message: reason,
       data,
     });
   };
 
   next();
 });
+
+const isLogin = passport.authenticate('jwt', { session: false });
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -59,6 +74,35 @@ app.get('/', (req, res) => {
 // 5주차 실습
 app.post("/users/signup", handleUserSignup);
 
+// 9주차 실습
+app.get("/oauth2/login/google",
+  passport.authenticate("google", {
+    session: false
+  })
+)
+app.get("/oauth2/callback/google", 
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login-failed"
+  }),
+  (req, res) => {
+    const tokens = req.user;
+
+    res.status(200).json({
+      success: true,
+      code: StatusCodes.OK,
+      message: "Google 로그인 성공",
+      data: tokens
+    })
+  }
+)
+
+app.get('/mypage', isLogin, (req,res) => {
+  res.status(200).success({
+    message: `인증 성공! ${req.user.name}님의 마이페이지입니다.`,
+    user: req.user
+  })
+})
 
 
 // 6주차 실습 - 페이지네이션
@@ -66,8 +110,6 @@ app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 // 6주차 미션(1)
 app.get("/mypage/reviews", handleUserReviews);
-
-
 
 // 8주차 실습
 app.use(
