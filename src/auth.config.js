@@ -28,6 +28,18 @@ const googleVerify = async (profile) => {
     if (!email) throw new Error(`profile email is required: ${profile} `);
 
     const placeholder = "추후 수정";
+    const existing = await prisma.user.findFirst({
+        where: { email }
+    });
+
+    if (existing) {
+        return {
+            id: Number(existing.id),
+            email: existing.email,
+            name: existing.name
+        };
+    }
+
     const created = await prisma.user.create({
         data: {
             email,

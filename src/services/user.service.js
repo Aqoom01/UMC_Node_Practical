@@ -24,13 +24,13 @@ import {
 } from "../errors.js";
 
 
-export const getUserByAccessToken = async (s) => {
-    const id = s.split("-")[4];
-    const user = await getUser(id);
-    if(user == null) throw new UnValidatedAccessTokenError();
+// export const getUserByAccessToken = async (s) => {
+//     const id = s.split("-")[4];
+//     const user = await getUser(id);
+//     if(user == null) throw new UnValidatedAccessTokenError();
 
-    return user;
-}
+//     return user;
+// }
 
 export const userSignUp = async (data) => {
     const joinUserId = await addUser({

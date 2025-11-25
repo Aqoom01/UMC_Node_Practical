@@ -21,6 +21,7 @@ import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
 
+// OAuth2 로그인과 JWT 검증 전략을 초기화합니다.
 passport.use(googleStrategy);
 passport.use(jwtStrategy);
 
@@ -37,6 +38,7 @@ app.set('json replacer', (key, value) =>
   typeof value === 'bigint' ? parseInt(value) : value
 );
 
+// 서버 응답 통일화
 app.use((req, res, next) => {
   res.success = (data, statusCode = StatusCodes.OK) => {
     return res.status(statusCode).json({
@@ -71,10 +73,9 @@ app.get('/', (req, res) => {
 })
 
 
-// 5주차 실습
+// 로그인/회원가입 엔드포인트
 app.post("/users/signup", handleUserSignup);
 
-// 9주차 실습
 app.get("/oauth2/login/google",
   passport.authenticate("google", {
     session: false
@@ -97,6 +98,7 @@ app.get("/oauth2/callback/google",
   }
 )
 
+// 소셜로그인 확인 실습
 app.get('/mypage', isLogin, (req,res) => {
   res.status(200).success({
     message: `인증 성공! ${req.user.name}님의 마이페이지입니다.`,
@@ -106,12 +108,14 @@ app.get('/mypage', isLogin, (req,res) => {
 
 
 // 6주차 실습 - 페이지네이션
-app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+app.get("/api/v1/stores/:storeId/reviews", isLogin, handleListStoreReviews);
 
 // 6주차 미션(1)
-app.get("/mypage/reviews", handleUserReviews);
+app.get("/mypage/reviews", isLogin, handleUserReviews);
 
-// 8주차 실습
+
+
+// swagger docs 접속 엔드포인트
 app.use(
   "/docs",
   swaggerUiExpress.serve,
@@ -122,6 +126,8 @@ app.use(
   })
 )
 
+
+// swagger 관련 설정
 app.get("/openapi.json", async (req, res, next) => {
   // #swagger.ignore = true
   const options = {
@@ -143,6 +149,8 @@ app.get("/openapi.json", async (req, res, next) => {
   res.json(result ? result.data : null);
 })
 
+
+// 오류 발생 시 사용
 app.use((err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
@@ -155,6 +163,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// port 번호로 서버 오픈
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
