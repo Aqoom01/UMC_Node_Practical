@@ -14,7 +14,8 @@ import { prisma } from "./db.config.js";
 // 엔드포인트 import
 import { 
   handleUserSignup,
-  handleUserReviews
+  handleUserReviews,
+  handleUserUpdate
 } from './controllers/user.controller.js';
 import { handleListStoreReviews } from './controllers/store.controller.js';
 import { StatusCodes } from 'http-status-codes';
@@ -113,7 +114,8 @@ app.get("/api/v1/stores/:storeId/reviews", isLogin, handleListStoreReviews);
 // 6주차 미션(1)
 app.get("/mypage/reviews", isLogin, handleUserReviews);
 
-
+// 9주차 미션: 사용자 정보 수정 API
+app.post("/mypage/edit", isLogin, handleUserUpdate)
 
 // swagger docs 접속 엔드포인트
 app.use(

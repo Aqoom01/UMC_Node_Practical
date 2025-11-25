@@ -1,10 +1,12 @@
 import {
     responseFromUser,
-    responseFromUserReviews
+    responseFromUserReviews,
+    responseFromUserId
 } from "../dtos/user.dto.js";
 import {
     addUser,
-    getUser
+    getUser,
+    editUserInfo
 } from "../repositories/user.repository.js";
 import {
     getUserReviews
@@ -22,15 +24,6 @@ import {
     DuplicateUserEmailError,
     UnValidatedAccessTokenError
 } from "../errors.js";
-
-
-// export const getUserByAccessToken = async (s) => {
-//     const id = s.split("-")[4];
-//     const user = await getUser(id);
-//     if(user == null) throw new UnValidatedAccessTokenError();
-
-//     return user;
-// }
 
 export const userSignUp = async (data) => {
     const joinUserId = await addUser({
@@ -55,4 +48,11 @@ export const listUserReviews = async (user, cursor) => {
     const reviews = await getReviewAnswer(await getImageUrl(await getReviewImages(await getUserReviews(user, cursor))));
 
     return responseFromUserReviews(reviews);
+}
+
+export const updateUserInfo = async (user, body) => {
+    const updated = await editUserInfo(user, body);
+    if(!updated) throw new Error("존재하지 않는 유저입니다.");
+
+    return responseFromUserId(updated)
 }

@@ -22,3 +22,9 @@ export const responseFromUser = ({ user }) => {
 export const responseFromUserReviews = (reviews) => {
     return reviews;
 }
+
+export const responseFromUserId = (userId) => {
+    return {
+        userId: userId
+    }
+}
