@@ -1,0 +1,13 @@
+name: delpoy-main
+
+on:
+  push:
+    branches:
+      - main        # main에 새로운 커밋이 올라온 경우 실행
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - TODO
