@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model agreement {
+  id         BigInt   @id @default(autoincrement())
+  id2        BigInt
+  posInfo    Boolean?
+  marketing  Boolean?
+  newEvent   Boolean?
+  reviewAns  Boolean?
+  inquiryAns Boolean?
+}
+
+model food {
+  id   BigInt  @id @default(autoincrement())
+  name String? @db.VarChar(5)
+}
+
+model inquiry {
+  id       BigInt  @id @default(autoincrement())
+  content  String? @db.Text
+  tyoe     Int?
+  inquirer BigInt
+}
+
+model inquirypicture {
+  id      BigInt @id @default(autoincrement())
+  inquiry BigInt
+  picture BigInt
+}
+
+model mission {
+  id      BigInt  @id @default(autoincrement())
+  content String? @db.Text
+  point   Int?
+  store   BigInt
+}
+
+model notice {
+  id       BigInt @id @default(autoincrement())
+  type     Int?
+  receiver BigInt
+}
+
+model picture {
+  id  BigInt  @id @default(autoincrement())
+  url String? @db.VarChar(50)
+}
+
+model region {
+  id   BigInt  @id @default(autoincrement())
+  name String? @db.VarChar(10)
+}
+
+model rereview {
+  id      BigInt  @id @default(autoincrement())
+  content String? @db.Text
+  origin  BigInt
+  writer  BigInt
+  created_at DateTime @db.DateTime(6)
+}
+
+model review {
+  id       BigInt   @id @default(autoincrement())
+  store    BigInt
+  reviewer BigInt
+  score    Decimal? @db.Decimal(2, 1)
+  content  String?  @db.Text
+  created_at DateTime @db.DateTime(6)
+}
+
+model reviewpicture {
+  id      BigInt @id @default(autoincrement())
+  review  BigInt
+  picture BigInt
+}
+
+model store {
+  id      BigInt  @id @default(autoincrement())
+  address String? @db.VarChar(50)
+  time    String? @db.VarChar(100)
+  region  BigInt
+  owner   BigInt
+  name    String  @db.VarChar(20)
+}
+
+model storepicture {
+  id      BigInt @id @default(autoincrement())
+  store   BigInt
+  picture BigInt
+}
+
+model user {
+  id         BigInt    @id @default(autoincrement())
+  email      String?   @db.VarChar(255)
+  password   String?   @db.VarChar(25)
+  name       String?   @db.VarChar(5)
+  gender     Int?
+  birth      DateTime? @db.DateTime(6)
+  address    String?   @db.VarChar(50)
+  subaddr    String?   @db.VarChar(50)
+  is_owner   Boolean?
+  created_at DateTime? @db.DateTime(6)
+  updated_at DateTime? @db.DateTime(6)
+  point      BigInt?
+}
+
+model user_food {
+  id     BigInt @id @default(autoincrement())
+  prefer BigInt
+  user   BigInt
+
+  @@map("user-food")
+}
+
+model user_mission {
+  id         BigInt    @id @default(autoincrement())
+  isProgress Int?
+  start_at   DateTime? @db.DateTime(6)
+  user       BigInt
+  mission    BigInt
+
+  @@map("user-mission")
+}
+
+model user_region {
+  id     BigInt @id @default(autoincrement())
+  region BigInt
+  count  Int?
+  user   BigInt
+
+  @@map("user-region")
+}
