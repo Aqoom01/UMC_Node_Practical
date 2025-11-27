@@ -1,9 +1,9 @@
-name: delpoy-main
+name: deploy-main
 
 on:
   push:
     branches:
-      - main        # main에 새로운 커밋이 올라온 경우 실행
+      - main
   workflow_dispatch:
 
 jobs:
@@ -13,13 +13,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Prisma 폴더가 변경되었는지 감지하는 단계 
+      - name: Check prisma has changes
+        uses: dorny/paths-filter@v3
+        id: paths-filter
+        with:
+          filters: |
+            prisma: ["prisma/**"]
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
           echo "$EC2_SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          cat >> ~/.ssh/config <<END
+         
+          cat >>~/.ssh/config <<END
           Host umc9thworkbook
             HostName $EC2_HOST
             User $EC2_USER
@@ -30,7 +39,7 @@ jobs:
           EC2_USER: ubuntu
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      
+
       - name: Copy Workspace
         run: |
           ssh umc9thworkbook 'sudo mkdir -p /opt/app'
@@ -39,25 +48,35 @@ jobs:
 
       - name: Install dependencies
         run: |
+          ssh umc9thworkbook 'cd /opt/app; npm install'
+          ssh umc9thworkbook 'cd /opt/app; npx prisma generate'
+
+      - name: Apply prisma migrations
+        if: steps.paths-filter.outputs.prisma == 'true'
+        run: |
+          ssh umc9thworkbook 'cd /opt/app; npx prisma migrate deploy'
+
+      - name: Copy systemd service file
+        run: |
           ssh umc9thworkbook '
             echo "[Unit]
             Description=UMC 9th Project
             After=network.target
 
             [Service]
-            User = ubuntu
-            ExecStart=/usr/bin/npm run dev --prefix /opt/app/
+            User=${USER}
+            ExecStart=/usr/bin/npm run start --prefix /opt/app/
             Restart=always
 
             [Install]
             WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
-            '
+          '
 
       - name: Enable systemd service
         run: |
           ssh umc9thworkbook 'sudo systemctl daemon-reload'
           ssh umc9thworkbook 'sudo systemctl enable app'
-      
+
       - name: Restart systemd service
         run: |
           ssh umc9thworkbook 'sudo systemctl restart app'
